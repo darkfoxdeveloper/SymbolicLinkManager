@@ -1,4 +1,5 @@
 ﻿using MetroFramework;
+using MetroFramework.Controls;
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -22,32 +23,30 @@ namespace SymbolicLinksManager
             bool success = false;
             try
             {
-                JunctionPoint.Create(txtFolder.Text, txtTargetFolder.Text);
-                success = true;
-            }
-            catch (IOException ex)
-            {
-                if (toggleOverwrite.Checked)
+                if (toggleLinkFileMode.Checked)
                 {
-                    DialogResult dRes = MetroMessageBox.Show(this, "Cannot create the symbolic link. Force create? This is danger", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
-
-                    if (dRes == DialogResult.OK)
+                    if (!toggleOverwrite.Checked)
                     {
-                        Directory.Delete(txtTargetFolder.Text);
-                        JunctionPoint.Create(txtFolder.Text, txtTargetFolder.Text);
-                        success = true;
+                        if (File.Exists(txtTargetFolder.Text))
+                        {
+                            MetroMessageBox.Show(this, "This file already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        } else
+                        {
+                            success = SLCore.CreateSymbolicFileLink(txtTargetFolder.Text, txtFolder.Text);
+                        }
+                    } else
+                    {
+                        success = SLCore.CreateSymbolicFileLink(txtTargetFolder.Text, txtFolder.Text);
                     }
                 } else
                 {
-                    if (Directory.Exists(txtTargetFolder.Text) && Directory.GetFiles(txtTargetFolder.Text).Length <= 0)
-                    {
-                        JunctionPoint.Create(txtFolder.Text, txtTargetFolder.Text, true);
-                        success = true;
-                    } else
-                    {
-                        MetroMessageBox.Show(this, ex.Message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
+                    SLCore.CreateSymbolicFolderLink(txtFolder.Text, txtTargetFolder.Text, toggleOverwrite.Checked);
+                    success = true;
                 }
+            }
+            catch (IOException ex)
+            {
+                MetroMessageBox.Show(this, "Cannot create the symbolic link. " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             if (success)
@@ -58,19 +57,56 @@ namespace SymbolicLinksManager
 
         private void btnSourceFolder_Click(object sender, EventArgs e)
         {
-            DialogResult d = folderSource.ShowDialog();
-            if (d == DialogResult.OK)
+            bool fileMode = toggleLinkFileMode.Checked;
+            if (fileMode)
             {
-                txtFolder.Text = folderSource.SelectedPath;
+                DialogResult d = fileSource.ShowDialog();
+                if (d == DialogResult.OK)
+                {
+                    txtFolder.Text = fileSource.FileName;
+                }
+            } else
+            {
+                DialogResult d = folderSource.ShowDialog();
+                if (d == DialogResult.OK)
+                {
+                    txtFolder.Text = folderSource.SelectedPath;
+                }
             }
         }
 
         private void btnTargetFolder_Click(object sender, EventArgs e)
         {
-            DialogResult d = folderTarget.ShowDialog();
-            if (d == DialogResult.OK)
+            bool fileMode = toggleLinkFileMode.Checked;
+            if (fileMode)
             {
-                txtTargetFolder.Text = folderTarget.SelectedPath;
+                fileTarget.Filter = "Same source format file|*" + Path.GetExtension(fileSource.FileName);
+                DialogResult d = fileTarget.ShowDialog();
+                if (d == DialogResult.OK)
+                {
+                    txtTargetFolder.Text = fileTarget.FileName;
+                }
+            } else
+            {
+                DialogResult d = folderTarget.ShowDialog();
+                if (d == DialogResult.OK)
+                {
+                    txtTargetFolder.Text = folderTarget.SelectedPath;
+                }
+            }
+        }
+
+        private void toggleLinkFileMode_CheckedChanged(object sender, EventArgs e)
+        {
+            bool fileMode = ((MetroToggle)sender).Checked;
+            if (fileMode)
+            {
+                lblFolder.Text = "Source File";
+                lblTargetFolder.Text = "Target File";
+            } else
+            {
+                lblFolder.Text = "Source Folder";
+                lblTargetFolder.Text = "Target Folder";
             }
         }
     }

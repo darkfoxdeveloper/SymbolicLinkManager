@@ -40,6 +40,10 @@
             this.folderTarget = new System.Windows.Forms.FolderBrowserDialog();
             this.btnSourceFolder = new MetroFramework.Controls.MetroButton();
             this.btnTargetFolder = new MetroFramework.Controls.MetroButton();
+            this.toggleLinkFileMode = new MetroFramework.Controls.MetroToggle();
+            this.lblLinkFileMode = new MetroFramework.Controls.MetroLabel();
+            this.fileSource = new System.Windows.Forms.OpenFileDialog();
+            this.fileTarget = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // lblFolder
@@ -169,11 +173,33 @@
             this.btnTargetFolder.UseSelectable = true;
             this.btnTargetFolder.Click += new System.EventHandler(this.btnTargetFolder_Click);
             // 
+            // toggleLinkFileMode
+            // 
+            this.toggleLinkFileMode.AutoSize = true;
+            this.toggleLinkFileMode.Location = new System.Drawing.Point(456, 49);
+            this.toggleLinkFileMode.Name = "toggleLinkFileMode";
+            this.toggleLinkFileMode.Size = new System.Drawing.Size(80, 17);
+            this.toggleLinkFileMode.TabIndex = 9;
+            this.toggleLinkFileMode.Text = "Off";
+            this.toggleLinkFileMode.UseSelectable = true;
+            this.toggleLinkFileMode.CheckedChanged += new System.EventHandler(this.toggleLinkFileMode_CheckedChanged);
+            // 
+            // lblLinkFileMode
+            // 
+            this.lblLinkFileMode.AutoSize = true;
+            this.lblLinkFileMode.Location = new System.Drawing.Point(442, 23);
+            this.lblLinkFileMode.Name = "lblLinkFileMode";
+            this.lblLinkFileMode.Size = new System.Drawing.Size(94, 19);
+            this.lblLinkFileMode.TabIndex = 10;
+            this.lblLinkFileMode.Text = "Link File Mode";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(635, 135);
+            this.ClientSize = new System.Drawing.Size(635, 138);
+            this.Controls.Add(this.lblLinkFileMode);
+            this.Controls.Add(this.toggleLinkFileMode);
             this.Controls.Add(this.btnTargetFolder);
             this.Controls.Add(this.btnSourceFolder);
             this.Controls.Add(this.lblOverwrite);
@@ -207,6 +233,10 @@
         private System.Windows.Forms.FolderBrowserDialog folderTarget;
         private MetroFramework.Controls.MetroButton btnSourceFolder;
         private MetroFramework.Controls.MetroButton btnTargetFolder;
+        private MetroFramework.Controls.MetroToggle toggleLinkFileMode;
+        private MetroFramework.Controls.MetroLabel lblLinkFileMode;
+        private System.Windows.Forms.OpenFileDialog fileSource;
+        private System.Windows.Forms.SaveFileDialog fileTarget;
     }
 }
 
